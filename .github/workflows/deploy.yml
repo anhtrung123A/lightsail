@@ -25,5 +25,8 @@ jobs:
       - name: Deploy via SSH
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/ec2.pem \
-            ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
-            "cd /var/www/html && git pull origin main"
+            ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
+              mkdir -p /var/www/test_project
+              cd /var/www/test_project
+              git pull origin main
+            EOF
