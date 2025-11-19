@@ -22,11 +22,13 @@ jobs:
         run: |
           ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Deploy via SSH
+      - name: Prepare remote folder
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/ec2.pem \
-            ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
-              mkdir -p /var/www/test_project
-              cd /var/www/test_project
-              git pull origin main
-            EOF
+            ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
+            "sudo mkdir -p /var/www/test_project && sudo chown -R $USER:$USER /var/www/test_project"
+
+      - name: Deploy code to EC2
+        run: |
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/ec2.pem" \
+            ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/var/www/test_project/
