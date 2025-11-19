@@ -26,7 +26,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/ec2.pem \
             ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
-            "sudo mkdir -p /var/www/test_project && sudo chown -R $USER:$USER /var/www/test_project"
+            "sudo mkdir -p /var/www/test_project && sudo chown -R ${{ secrets.SSH_USERNAME }}:${{ secrets.SSH_USERNAME }} /var/www/test_project"
 
       - name: Deploy code to EC2
         run: |
